@@ -1,8 +1,8 @@
-import 'dart:ffi';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_application_1/Helper.dart';
+import 'package:flutter_application_1/profile_screen.dart';
 import 'package:rive/rive.dart';
 
 import 'Animated_login.dart';
@@ -98,11 +98,16 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   void validateEmailAndPassword() {
-    if (formKey.currentState!.validate()) {
-      addControllerSuccess();
-    } else {
-      addControllerFail();
-    }
+    Future.delayed(const Duration(seconds: 1), () {
+      if (formKey.currentState!.validate()) {
+        addControllerSuccess();
+        context.push(const ProfileScreen());
+        // Navigator.of(context).push(
+        //     MaterialPageRoute(builder: (context) => const ProfileScreen()));
+      } else {
+        addControllerFail();
+      }
+    });
   }
 
   @override
@@ -138,7 +143,7 @@ class _LoginScreenState extends State<LoginScreen> {
       ),
       body: SingleChildScrollView(
         padding: EdgeInsets.symmetric(
-            horizontal: MediaQuery.of(context).size.width / 20),
+            horizontal: context.screenWidth / 20),
         child: Column(
           children: [
             Padding(
@@ -186,6 +191,8 @@ class _LoginScreenState extends State<LoginScreen> {
                                 borderRadius: BorderRadius.circular(25.0),
                               )),
                           focusNode: passwordFocusNode,
+                          validator: (value) =>
+                              value != testPassword ? "Wrong Password" : null,
                         ),
                         SizedBox(
                           height: MediaQuery.of(context).size.height / 18,
@@ -199,7 +206,10 @@ class _LoginScreenState extends State<LoginScreen> {
                                 backgroundColor: Colors.blue,
                                 padding:
                                     const EdgeInsets.symmetric(vertical: 14)),
-                            onPressed: () {},
+                            onPressed: () {
+                              passwordFocusNode.unfocus();
+                              validateEmailAndPassword();
+                            },
                             child: const Text(
                               'Login',
                               style:
